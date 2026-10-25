@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>课题组资料定位助手</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f5f6f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px 36px;
+      max-width: 560px;
+      width: 100%;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+    h1 { font-size: 22px; color: #1a1a1a; margin-bottom: 6px; }
+    .sub { font-size: 14px; color: #888; margin-bottom: 24px; line-height: 1.5; }
+    .input-row { display: flex; gap: 10px; }
+    input {
+      flex: 1; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px;
+      font-size: 15px; outline: none;
+    }
+    input:focus { border-color: #4a7cf7; }
+    button {
+      padding: 12px 22px; background: #4a7cf7; color: #fff; border: none;
+      border-radius: 10px; font-size: 15px; cursor: pointer; white-space: nowrap;
+    }
+    button:hover { background: #3a66d9; }
+    .result { margin-top: 20px; padding: 16px; border-radius: 10px; font-size: 14px; line-height: 1.7; display: none; }
+    .result.ok { background: #eef5ff; border: 1px solid #c8daff; display: block; }
+    .result.fail { background: #fff5f5; border: 1px solid #ffd4d4; display: block; color: #c0392b; }
+    .hint { margin-top: 14px; font-size: 12px; color: #aaa; line-height: 1.6; }
+    .footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid #f0f0f0; font-size: 12px; color: #bbb; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>课题组资料定位助手</h1>
+    <p class="sub">输入资料标题，查看它在共享目录中的存放位置。</p>
+    <div class="input-row">
+      <input id="q" type="text" placeholder="例如：实验室安全须知" autocomplete="off">
+      <button onclick="lookup()">查找位置</button>
+    </div>
+    <div id="out" class="result"></div>
+    <p class="hint">请尽量输入完整标题。本工具仅展示索引位置，不读取文件正文。</p>
+    <div class="footer">索引范围有限（5 条示例数据），查不到时请如实告知。</div>
+  </div>
+
+  <script>
+    const INDEX = [
+      { id: "D01", title: "实验室安全须知", loc: "共享目录/规范" },
+      { id: "D02", title: "离心机使用流程", loc: "共享目录/仪器" },
+      { id: "D03", title: "入门文献清单", loc: "共享目录/文献" },
+      { id: "D04", title: "周报写法说明", loc: "共享目录/格式" },
+      { id: "D05", title: "组会说明", loc: "共享目录/FAQ" },
+    ];
+
+    function lookup() {
+      const q = document.getElementById('q').value.trim();
+      const out = document.getElementById('out');
+      if (!q) {
+        out.className = 'result fail';
+        out.textContent = '请先输入资料标题。';
+        return;
+      }
+      const hit = INDEX.find(item => item.title === q);
+      if (hit) {
+        out.className = 'result ok';
+        out.innerHTML = `<strong>${hit.id}</strong>｜${hit.title}<br>存放位置：${hit.loc}`;
+      } else {
+        out.className = 'result fail';
+        out.textContent = '索引中未包含这份资料，请确认标题或联系管理员补充。';
+      }
+    }
+
+    document.getElementById('q').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') lookup();
+    });
+  </script>
+</body>
+</html>
